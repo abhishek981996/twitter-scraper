@@ -29,10 +29,10 @@ def twitter_search():
         words = ask_input.replace(" ", "%20")
         url = "https://twitter.com/"+str(words)
         object1 = Find()
-        return url
+        return url, ask_input
 
 def Spider():
-    url = twitter_search()
+    url,username = twitter_search()
     object1 = Find()
     page = object1.open_url(url)
 
@@ -44,10 +44,8 @@ def Spider():
     location = soup.find_all("span",class_="ProfileHeaderCard-locationText")
     bio_info = soup.find_all('p',class_="ProfileHeaderCard-bio")
     name = soup.find_all('a',class_="ProfileHeaderCard-nameLink")
-
-    username = soup.find_all("a",class_="ProfileHeaderCard-screennameLink")
     print ("\n\nname:%s, \nusername:%s, \ntweets:%s, \nlikes:%s, \nfollowers:%s, \nfollowing:%s, \nbio:%s, \nlocation:%s") %(name[0].string,
-                username[0].string,links[0].string,links[3].string,links[2].string,links[1].string,
+                username,links[0].string,links[3].string,links[2].string,links[1].string,
                 bio_info[0].string,location[0].string)
   
 
