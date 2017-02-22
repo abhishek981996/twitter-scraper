@@ -8,11 +8,11 @@ import urllib2
 import re
 from bs4 import BeautifulSoup
 import random 
-import download
 
 
 class Find():
     def open_url(self,url):
+        '''This opens the url and returns the entire htmlform of the page'''
         opener = urllib2.build_opener()
         opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
         page = opener.open(url)
@@ -23,58 +23,45 @@ class Find():
         return list
 
 
-
-class Search(Find):
-    def ask_input(self):
-        print("Enter the word you want to search")
-        word = raw_input()
-        words = word.replace(" ", "%20")
-
-
-        return str(words)
-
-    def google_search(self,lib):
-        url = "https://www.google.co.in/search?q=" +(str(lib))+ "&oq="+(str(lib))+"&gs_l=serp.12..0i71l8.0.0.0.6391.0.0.0.0.0.0.0.0..0.0....0...1c..64.serp..0.0.0.UiQhpfaBsuU"
+def twitter_search():
+        print("enter the user name of whom you want to get the details")
+        ask_input = raw_input()
+        words = ask_input.replace(" ", "%20")
+        url = "https://twitter.com/"+str(words)
         object1 = Find()
-        return object1.open_url(url)
+        return url
 
-    def pirate_torrent_seed(self,lib):
-        url_open = "https://pirateproxy.vip/search/"
-        url_base = "/0/7/0/"
-        url = url_open + lib + url_base
-        print url
-        object1 = Find()
-        page = object1.open_url(url)        
-        return page
+def Spider():
+    url = twitter_search()
+    object1 = Find()
+    page = object1.open_url(url)
 
-def Main():
-    search = Search()
-    word = search.ask_input()
-    site_map = search.pirate_torrent_seed(word)
-    soup = BeautifulSoup(site_map,"html.parser")
-    
-    links = soup.find_all('a', attrs={'href': re.compile("^magnet")})
-    
-    title = soup.find_all('a',attrs={'class': "detLink"})
+    #now we have the page that is the entire detail of the user in html.
+    # what we need is to scrape all the details such as followers tweets likes etc
+    #this can be accoumplished using beautiful so
+    soup = BeautifulSoup(page,"html.parser")
+    links = soup.find_all("span", class_="ProfileNav-value")
+    location = soup.find_all("span",class_="ProfileHeaderCard-locationText")
+    bio_info = soup.find_all('p',class_="ProfileHeaderCard-bio")
+    name = soup.find_all('a',class_="ProfileHeaderCard-nameLink")
 
-    description = soup.find_all('font', attrs={'class': "detDesc"})
+    username = soup.find_all("a",class_="ProfileHeaderCard-screennameLink")
+    print ("\n\nname:%s, \nusername:%s, \ntweets:%s, \nlikes:%s, \nfollowers:%s, \nfollowing:%s, \nbio:%s, \nlocation:%s") %(name[0].string,
+                username[0].string,links[0].string,links[3].string,links[2].string,links[1].string,
+                bio_info[0].string,location[0].string)
+  
 
-    i = random.randrange(0,3)
-    print("Do you wish to download %s having description %s .Type(y/n)")%(title[i].get_text(), description[i].get_text())
-    ask_input = raw_input()
-    if str(ask_input) == 'y':
-        print links[i]
-        download.download(links[i])
-    else:
-        print("thks for using this")
+  #  title = soup.find_all('a',attrs={'class': "detLink"})
 
+   # description = soup.find_all('font', attrs={'class': "detDesc"})
 
-
-
-
-    for t in title:
-        print t.get_text()
-
+    #i = random.randrange(0,3)
+   # print("Do you wish to download %s having description %s .Type(y/n)")%(title[i].get_text(), description[i].get_text())
+    #ask_input = raw_input()
+    #if str(ask_input) == 'y':
+     #   print links[i]
+      #  download.download(links[i])
+    #else:
+     #   print("thks for using this")
 if __name__ == '__main__':
-    
-    Main()
+    Spider()
