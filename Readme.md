@@ -15,7 +15,7 @@ python webcrawler.py
   type the user name 
   
   * The result is dislayed in the format of
-   ``sh {name :somename
+   ```sh {name :somename
     username: someusername
     tweets:23
     likes:1234
